@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 class WepinOptions {
   final String _appId;
   final String _appKey;
@@ -13,11 +11,11 @@ class WepinOptions {
 
   String get appId => _appId;
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      'appId' : _appId,
-      'appKey' : _appKey,
-      'attributes' : _widgetAttributes.toJson()
+      'appId': _appId,
+      'appKey': _appKey,
+      'attributes': _widgetAttributes.toJson()
     };
   }
 }
@@ -32,12 +30,10 @@ class WidgetAttributes {
 
   String get defaultLanguage => _defaultLanguage;
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      'defaultCurrency' : _defaultCurrency,
-      'defaultLanguage' : _defaultLanguage
+      'defaultCurrency': _defaultCurrency,
+      'defaultLanguage': _defaultLanguage
     };
   }
 }
-
-

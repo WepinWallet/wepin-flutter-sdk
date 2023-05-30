@@ -29,33 +29,47 @@ class SampleApp extends StatefulWidget with WepinDelegate {
   @override
   void onWepinError(String errMsg) {
     // TODO: implement onWepinError
-    print('onWepinError : $errMsg');
+    if (kDebugMode) {
+      print('onWepinError : $errMsg');
+    }
   }
 
   @override
   void onAccountSet() {
     // TODO: implement onAccountSet
-    print('onAccountSet');
+    if (kDebugMode) {
+      print('onAccountSet');
+    }
     List<Account>? accounts = _wepin.getAccounts();
     if (accounts == null) {
-      print('accounts is null');
+      if (kDebugMode) {
+        print('accounts is null');
+      }
       return;
     }
     for (var account in accounts!) {
-      print('netwrok : ${account.network}');
-      print('address : ${account.address}');
+      if (kDebugMode) {
+        print('netwrok : ${account.network}');
+        print('address : ${account.address}');
+      }
     }
   }
 }
 
 class _SampleApp extends State<SampleApp> {
   StreamSubscription? _sub;
-  final String _appId = 'test_app_id';
-  final String _appSdkKey = 'test_app_key';
+  // final String _appId = 'test_app_id';
+  // final String _appSdkKey = 'test_app_key';
+
+  final String _appId = '88889999000000000000000000000000';
+  final String _appSdkKey =
+      'ak_dev_VrOLpEuUHVoN7JFKe9hfkPqorwzf4rGNuR1Jykh47ly';
 
   @override
   void initState() {
-    print('initState');
+    if (kDebugMode) {
+      print('initState');
+    }
     super.initState();
 
     widget._wepin = Wepin();
@@ -66,24 +80,32 @@ class _SampleApp extends State<SampleApp> {
   /// while already started.
   /// Noti : 딥링크 받는 부분
   void _handleDeepLink() {
-    print('_handleDeepLink');
+    if (kDebugMode) {
+      print('_handleDeepLink');
+    }
     if (!kIsWeb) {
       // It will handle app links while the app is already started - be it in
       // the foreground or in the background.
       _sub = uriLinkStream.listen((Uri? uri) {
         if (!mounted) return;
-        print('got_uri: $uri');
+        if (kDebugMode) {
+          print('got_uri: $uri');
+        }
         widget._wepin.handleWepinLink(uri!);
       }, onError: (Object err) {
         if (!mounted) return;
-        print('got_err: $err');
+        if (kDebugMode) {
+          print('got_err: $err');
+        }
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('build');
+    if (kDebugMode) {
+      print('build');
+    }
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -115,7 +137,9 @@ class _SampleApp extends State<SampleApp> {
   }
 
   void _initialize(BuildContext context) {
-    print('_initialize');
+    if (kDebugMode) {
+      print('_initialize');
+    }
     if (widget._wepin.isInitialized()) {
       _showToast('Already initialized');
       return;
@@ -127,13 +151,17 @@ class _SampleApp extends State<SampleApp> {
   }
 
   void _isInitialized() {
-    print('_isInitialized');
+    if (kDebugMode) {
+      print('_isInitialized');
+    }
     bool result = widget._wepin.isInitialized();
     _showToast('isIntialized : $result');
   }
 
   void _openWidget() {
-    print('_openWidget');
+    if (kDebugMode) {
+      print('_openWidget');
+    }
     if (!widget._wepin.isInitialized()) {
       _showToast('Wepin is not initialized');
       return;
@@ -142,7 +170,9 @@ class _SampleApp extends State<SampleApp> {
   }
 
   void _closeWidget() {
-    print('_closeWidget');
+    if (kDebugMode) {
+      print('_closeWidget');
+    }
     if (!widget._wepin.isInitialized()) {
       _showToast('Wepin is not initialized');
       return;
@@ -152,25 +182,33 @@ class _SampleApp extends State<SampleApp> {
 
   void _getAccounts() {
     List<Account>? accounts;
-    print('_getAccounts');
+    if (kDebugMode) {
+      print('_getAccounts');
+    }
     if (!widget._wepin.isInitialized()) {
       _showToast('Wepin is not initialized');
       return;
     }
     accounts = widget._wepin.getAccounts();
     if (accounts == null) {
-      print('accounts is null');
+      if (kDebugMode) {
+        print('accounts is null');
+      }
       _showToast('accounts is null');
       return;
     }
-    for (var account in accounts!) {
-      print('network : ${account.network}');
-      print('address : ${account.address}');
+    for (var account in accounts) {
+      if (kDebugMode) {
+        print('network : ${account.network}');
+        print('address : ${account.address}');
+      }
     }
   }
 
   void _finalize() {
-    print('_finalize');
+    if (kDebugMode) {
+      print('_finalize');
+    }
     widget._wepin.finalize();
   }
 

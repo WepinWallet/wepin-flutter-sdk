@@ -22,7 +22,9 @@ class Wepin {
   }
 
   void initialize(BuildContext appContext, WepinOptions wepinOptions) {
-    print('wepin_initialize');
+    if (kDebugMode) {
+      print('wepin_initialize');
+    }
     _appContext = appContext;
     _wepinOptions = wepinOptions;
 
@@ -39,7 +41,9 @@ class Wepin {
   }
 
   void handleWepinLink(Uri linkUrl) {
-    print('handleWepinLink');
+    if (kDebugMode) {
+      print('handleWepinLink');
+    }
 
     if (_wepinFlutter != null) {
       _wepinFlutter!.finalize();
@@ -55,14 +59,20 @@ class Wepin {
   }
 
   bool isInitialized() {
-    print('wepin_isInitialized');
+    if (kDebugMode) {
+      print('wepin_isInitialized');
+    }
     return WepinManagerModel().getInitialized();
   }
 
   void openWidget() {
-    print('wepin_openWidget');
+    if (kDebugMode) {
+      print('wepin_openWidget');
+    }
     if (!isInitialized()) {
-      print('widget is not initialized');
+      if (kDebugMode) {
+        print('widget is not initialized');
+      }
       return;
     }
     showDialog(
@@ -73,29 +83,41 @@ class Wepin {
   }
 
   void closeWidget() {
-    print('wepin_closeWidget');
+    if (kDebugMode) {
+      print('wepin_closeWidget');
+    }
     if (!isInitialized()) {
-      print('widget is not initialized');
+      if (kDebugMode) {
+        print('widget is not initialized');
+      }
       return;
     }
 
     if (Navigator.canPop(_appContext)) {
-      print('return_to_app');
+      if (kDebugMode) {
+        print('return_to_app');
+      }
       Navigator.pop(_appContext);
     }
   }
 
   List<Account>? getAccounts() {
-    print('wepin_getAccounts');
+    if (kDebugMode) {
+      print('wepin_getAccounts');
+    }
     if (!isInitialized()) {
-      print('widget is not initialized');
+      if (kDebugMode) {
+        print('widget is not initialized');
+      }
       return null;
     }
     return WepinManagerModel().getAccounts();
   }
 
   void finalize() {
-    print('wepin_finalize');
+    if (kDebugMode) {
+      print('wepin_finalize');
+    }
     WepinManagerModel().setInitialized(false);
     WepinManagerModel().setAccounts(null);
     if (_wepinFlutter != null) {
