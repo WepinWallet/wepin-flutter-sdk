@@ -58,12 +58,8 @@ class SampleApp extends StatefulWidget with WepinDelegate {
 
 class _SampleApp extends State<SampleApp> {
   StreamSubscription? _sub;
-  // final String _appId = 'test_app_id';
-  // final String _appSdkKey = 'test_app_key';
-
-  final String _appId = '88889999000000000000000000000000';
-  final String _appSdkKey =
-      'ak_dev_VrOLpEuUHVoN7JFKe9hfkPqorwzf4rGNuR1Jykh47ly';
+  final String _appId = 'test_app_id';
+  final String _appSdkKey = 'test_app_key';
 
   @override
   void initState() {
