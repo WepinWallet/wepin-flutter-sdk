@@ -1,8 +1,9 @@
 name: wepin_flutter
-description: A new Flutter project.
+description: Flutter package of Wepin
 version: 0.0.1
-homepage:
-
+homepage: https://www.wepin.io
+repository: https://github.com/WepinWallet/wepin-flutter-sdk
+ 
 environment:
   sdk: '>=3.0.0-411.0.dev <4.0.0'
   flutter: ">=1.17.0"
