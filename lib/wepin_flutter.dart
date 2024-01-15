@@ -13,11 +13,15 @@ import 'package:wepin_flutter/model/constants.dart';
 import 'package:wepin_flutter/model/wepin_manager_model.dart';
 import 'package:wepin_flutter/webview/js_request.dart';
 import 'package:wepin_flutter/webview/js_response.dart';
+import 'package:wepin_flutter/webview/ne_request.dart';
 
 import 'wepin_inputs.dart';
 import 'wepin_outputs.dart';
 
 // ignore: must_be_immutable
+
+late InAppWebViewController _webViewController;
+
 class WepinFlutter extends StatefulWidget {
   final WepinOptions _wepinOptions;
   final Uri? _linkUrl;
@@ -50,11 +54,20 @@ class WepinFlutter extends StatefulWidget {
       }
       return;
     }
-
     while (Navigator.canPop(_childWidget!.context)) {
       Navigator.pop(_childWidget!.context);
     }
     _childWidget = null;
+    closeInAppWebView();
+  }
+
+  void sendNativeEvent(NERequest request) async {
+    String requestMsg = jsonEncode(request);
+    if (kDebugMode) {
+      print('sendNativeEvent : $requestMsg');
+    }
+    await _webViewController.callAsyncJavaScript(
+        functionBody: 'onFlutterEvent($requestMsg)');
   }
 }
 
@@ -62,8 +75,6 @@ class _WepinFlutter extends State<WepinFlutter> {
   late String _loadUrl;
   String? widgetUrl;
   String? widgetLoginUrl;
-  late InAppWebViewController _webViewController;
-  late InAppWebViewGroupOptions _inAppWebViewGroupOptions;
   String _packageName = '';
 
   @override
@@ -73,8 +84,9 @@ class _WepinFlutter extends State<WepinFlutter> {
     } // Noti : call 되면 최초 한번만 실행됨
     super.initState();
     if (Platform.isAndroid) {
-      AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+      InAppWebViewController.setWebContentsDebuggingEnabled(true);
     }
+
     if (kDebugMode) {
       print(
           'appId : ${widget._wepinOptions.appId} | appKey : ${widget._wepinOptions.appKey}');
@@ -111,35 +123,35 @@ class _WepinFlutter extends State<WepinFlutter> {
       _loadUrl = widgetUrl!;
     }
 
-    _inAppWebViewGroupOptions = InAppWebViewGroupOptions(
-        crossPlatform: InAppWebViewOptions(
-            javaScriptCanOpenWindowsAutomatically: true,
-            transparentBackground: true,
-            javaScriptEnabled: true,
-            useOnDownloadStart: true,
-            useOnLoadResource: true,
-            cacheEnabled: true,
-            preferredContentMode: UserPreferredContentMode.MOBILE,
-            useShouldInterceptAjaxRequest: true,
-            useShouldOverrideUrlLoading: true,
-            mediaPlaybackRequiresUserGesture: true,
-            allowFileAccessFromFileURLs: true,
-            allowUniversalAccessFromFileURLs: true),
-        android: AndroidInAppWebViewOptions(
-          useHybridComposition: true,
-        ),
-        ios: IOSInAppWebViewOptions(
-          allowsAirPlayForMediaPlayback: true,
-          suppressesIncrementalRendering: true,
-          ignoresViewportScaleLimits: true,
-          selectionGranularity: IOSWKSelectionGranularity.DYNAMIC,
-          isPagingEnabled: true,
-          enableViewportScale: true,
-          sharedCookiesEnabled: true,
-          automaticallyAdjustsScrollIndicatorInsets: true,
-          useOnNavigationResponse: true,
-          allowsInlineMediaPlayback: true,
-        ));
+    // _inAppWebViewGroupOptions = InAppWebViewGroupOptions(
+    //     crossPlatform: InAppWebViewOptions(
+    //         javaScriptCanOpenWindowsAutomatically: true,
+    //         transparentBackground: true,
+    //         javaScriptEnabled: true,
+    //         useOnDownloadStart: true,
+    //         useOnLoadResource: true,
+    //         cacheEnabled: true,
+    //         preferredContentMode: UserPreferredContentMode.MOBILE,
+    //         useShouldInterceptAjaxRequest: true,
+    //         useShouldOverrideUrlLoading: true,
+    //         mediaPlaybackRequiresUserGesture: true,
+    //         allowFileAccessFromFileURLs: true,
+    //         allowUniversalAccessFromFileURLs: true),
+    //     android: AndroidInAppWebViewOptions(
+    //       useHybridComposition: true,
+    //     ),
+    //     ios: IOSInAppWebViewOptions(
+    //       allowsAirPlayForMediaPlayback: true,
+    //       suppressesIncrementalRendering: true,
+    //       ignoresViewportScaleLimits: true,
+    //       selectionGranularity: IOSWKSelectionGranularity.DYNAMIC,
+    //       isPagingEnabled: true,
+    //       enableViewportScale: true,
+    //       sharedCookiesEnabled: true,
+    //       automaticallyAdjustsScrollIndicatorInsets: true,
+    //       useOnNavigationResponse: true,
+    //       allowsInlineMediaPlayback: true,
+    //     ));
     widget._childWidget = this;
   }
 
@@ -156,10 +168,16 @@ class _WepinFlutter extends State<WepinFlutter> {
             child: Offstage(
               offstage: false,
               child: InAppWebView(
-                initialUrlRequest: URLRequest(
-                  url: Uri.parse(_loadUrl),
+                initialUrlRequest: URLRequest(url: WebUri(_loadUrl)),
+                //initialOptions: _inAppWebViewGroupOptions,
+                initialSettings: InAppWebViewSettings(
+                  transparentBackground: true,
+                  safeBrowsingEnabled: true,
+                  javaScriptEnabled: true,
+                  useShouldOverrideUrlLoading: true,
+                  javaScriptCanOpenWindowsAutomatically: true,
+                  //supportMultipleWindows: true,
                 ),
-                initialOptions: _inAppWebViewGroupOptions,
                 onWebViewCreated: (controller) {
                   if (kDebugMode) {
                     print('onWebViewCreated');
@@ -172,22 +190,39 @@ class _WepinFlutter extends State<WepinFlutter> {
                     print('onLoadStart url : $url');
                   }
                 },
-
                 onCreateWindow: (controller, action) async {
                   if (kDebugMode) {
-                    print('onCreateWindow');
+                    print('onCreateWindow openUrl : ${action.request.url}');
                   }
-                  return;
+                  // Noti : iOS 인 경우 window.open 이벤트는 요기서 처리
+                  if (Platform.isIOS) {
+                    if (action.request.url != null) {
+                      Uri openUrl = Uri.parse(action.request.url.toString());
+                      if (await canLaunchUrl(openUrl)) {
+                        launchUrl(openUrl, mode: LaunchMode.inAppBrowserView);
+                      }
+                      return true;
+                    }
+                  }
                 },
 
-                onLoadStop: (controller, url) {},
+                onCloseWindow: (controller) {
+                  if (kDebugMode) {
+                    print('onCloseWindow');
+                  }
+                },
+
+                onLoadStop: (controller, url) {
+                  if (kDebugMode) {
+                    print('onLoadStop : $url');
+                  }
+                },
                 onConsoleMessage: (controller, conslomessage) {
                   if (kDebugMode) {
                     print('consoleMessage : $conslomessage');
                   }
                 },
 
-                // Noti : window.open / close 이벤트 받는 부분
                 shouldOverrideUrlLoading:
                     (controller, shouldOverrideUrlLoadingRequest) async {
                   var url = shouldOverrideUrlLoadingRequest.request.url;
@@ -195,13 +230,14 @@ class _WepinFlutter extends State<WepinFlutter> {
                   if (kDebugMode) {
                     print('shouldOverrideUrlLoading : $uri');
                   }
-                  if (uri.toString().startsWith('${widgetUrl!}provide/') &&
-                      uri.toString().contains('domain=$_packageName')) {
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri,
-                          mode: LaunchMode.externalApplication);
+                  // Noti : Android 인 경우 window.open 이벤트는 요기서 처리
+                  if (Platform.isAndroid) {
+                    if (uri.toString().isNotEmpty) {
+                      if (await canLaunchUrl(uri)) {
+                        launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                      }
+                      return NavigationActionPolicy.CANCEL;
                     }
-                    return NavigationActionPolicy.CANCEL;
                   }
                   return NavigationActionPolicy.ALLOW;
                 },
@@ -338,7 +374,7 @@ class _WepinFlutter extends State<WepinFlutter> {
           }
           widget._appWidget.onWepinError('wepin flutter is not mounted');
         }
-
+        break;
       default:
         if (kDebugMode) {
           print('Invalid Command : $command');
@@ -388,7 +424,9 @@ class _WepinFlutter extends State<WepinFlutter> {
           if (kDebugMode) {
             print('JSResponse : $response');
           }
-          return response; // 웹뷰로 response 반환
+          if (response.isNotEmpty) {
+            return response; // 웹뷰로 response 반환
+          }
         });
     return;
   }
@@ -422,19 +460,12 @@ class _WepinFlutter extends State<WepinFlutter> {
     }
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     _packageName = packageInfo.packageName;
+    WepinManagerModel().setAppUniqueId(_packageName);
     if (_packageName.isEmpty) {
       widget._appWidget.onWepinError('packageName is empty');
     }
     if (kDebugMode) {
       print('packageName : $_packageName');
     }
-  }
-
-  void finalize() {
-    if (kDebugMode) {
-      print('finalize');
-    }
-    widgetUrl = null;
-    widgetLoginUrl = null;
   }
 }

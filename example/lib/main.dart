@@ -11,6 +11,7 @@ import 'package:wepin_flutter/wepin_delegate.dart';
 import 'package:wepin_flutter/wepin_inputs.dart';
 import 'package:wepin_flutter/wepin_outputs.dart';
 
+late Wepin _wepin;
 void main() => runApp(MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -21,7 +22,6 @@ void main() => runApp(MaterialApp(
 
 class SampleApp extends StatefulWidget with WepinDelegate {
   SampleApp({super.key});
-  late Wepin _wepin;
 
   @override
   _SampleApp createState() => _SampleApp();
@@ -68,7 +68,7 @@ class _SampleApp extends State<SampleApp> {
     }
     super.initState();
 
-    widget._wepin = Wepin();
+    _wepin = Wepin();
     _handleDeepLink(); // Noti : 딥링크 처리함수 추가
   }
 
@@ -87,7 +87,7 @@ class _SampleApp extends State<SampleApp> {
         if (kDebugMode) {
           print('got_uri: $uri');
         }
-        widget._wepin.handleWepinLink(uri!);
+        _wepin.handleWepinLink(uri!);
       }, onError: (Object err) {
         if (!mounted) return;
         if (kDebugMode) {
@@ -105,26 +105,36 @@ class _SampleApp extends State<SampleApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Wepin Flutter Example'),
+          title: const Text('Wepin Flutter Example-Dev'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 30)),
                   onPressed: () => _initialize(context),
                   child: const Text('initialize')),
               ElevatedButton(
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 30)),
                   onPressed: _isInitialized,
                   child: const Text('is_initialized')),
               ElevatedButton(
-                  onPressed: _openWidget, child: const Text('open_widget')),
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 30)),
+                  onPressed: _openWidget,
+                  child: const Text('open_widget')),
               ElevatedButton(
-                  onPressed: _closeWidget, child: const Text('close_widget')),
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 30)),
+                  onPressed: _closeWidget,
+                  child: const Text('close_widget')),
               ElevatedButton(
-                  onPressed: _getAccounts, child: const Text('get_accounts')),
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 30)),
+                  onPressed: _getAccounts,
+                  child: const Text('get_accounts')),
               ElevatedButton(
-                  onPressed: _finalize, child: const Text('finalize')),
+                  style: ElevatedButton.styleFrom(fixedSize: Size(150, 30)),
+                  onPressed: _finalize,
+                  child: const Text('finalize')),
             ],
           ),
         ),
@@ -136,21 +146,21 @@ class _SampleApp extends State<SampleApp> {
     if (kDebugMode) {
       print('_initialize');
     }
-    if (widget._wepin.isInitialized()) {
+    if (_wepin.isInitialized()) {
       _showToast('Already initialized');
       return;
     }
     WidgetAttributes widgetAttributes = WidgetAttributes('ko', 'krw');
     WepinOptions wepinOptions =
         WepinOptions(_appId, _appSdkKey, widgetAttributes);
-    widget._wepin.initialize(context, wepinOptions);
+    _wepin.initialize(context, wepinOptions);
   }
 
   void _isInitialized() {
     if (kDebugMode) {
       print('_isInitialized');
     }
-    bool result = widget._wepin.isInitialized();
+    bool result = _wepin.isInitialized();
     _showToast('isIntialized : $result');
   }
 
@@ -158,22 +168,22 @@ class _SampleApp extends State<SampleApp> {
     if (kDebugMode) {
       print('_openWidget');
     }
-    if (!widget._wepin.isInitialized()) {
+    if (!_wepin.isInitialized()) {
       _showToast('Wepin is not initialized');
       return;
     }
-    widget._wepin.openWidget();
+    _wepin.openWidget();
   }
 
   void _closeWidget() {
     if (kDebugMode) {
       print('_closeWidget');
     }
-    if (!widget._wepin.isInitialized()) {
+    if (!_wepin.isInitialized()) {
       _showToast('Wepin is not initialized');
       return;
     }
-    widget._wepin.closeWidget();
+    _wepin.closeWidget();
   }
 
   void _getAccounts() {
@@ -181,11 +191,11 @@ class _SampleApp extends State<SampleApp> {
     if (kDebugMode) {
       print('_getAccounts');
     }
-    if (!widget._wepin.isInitialized()) {
+    if (!_wepin.isInitialized()) {
       _showToast('Wepin is not initialized');
       return;
     }
-    accounts = widget._wepin.getAccounts();
+    accounts = _wepin.getAccounts();
     if (accounts == null) {
       if (kDebugMode) {
         print('accounts is null');
@@ -205,7 +215,7 @@ class _SampleApp extends State<SampleApp> {
     if (kDebugMode) {
       print('_finalize');
     }
-    widget._wepin.finalize();
+    _wepin.finalize();
   }
 
   void _showToast(String message) {
