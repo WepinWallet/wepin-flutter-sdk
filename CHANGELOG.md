@@ -5,3 +5,7 @@
 ## 0.0.2
 
 * iOS Minimum deployment version up to 14.5
+
+## 0.0.3
+
+* Apply InAppBrowser
