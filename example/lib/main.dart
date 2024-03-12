@@ -36,19 +36,6 @@ class _SampleApp extends State<SampleApp> {
   String _testSignedIdToken = '';
   String _wepinResult = 'false';
 
-  //final String _appId = '88889999000000000000000000000000';
-  // final String _appSdkKey =
-  //     'ak_dev_oqhPz5CCVPPsx2WveCMKt5CwckauiB1aEme1STozeHy';
-  // final String _appSdkKey =
-  //     'ak_dev_VrOLpEuUHVoN7JFKe9hfkPqorwzf4rGNuR1Jykh47ly';
-
-  // final String _iosSdkKey =
-  //     'ak_dev_VrOLpEuUHVoN7JFKe9hfkPqorwzf4rGNuR1Jykh47ly'; // iOS dev key
-  // final String _testPrivKey =
-  //     '84a0de257b96f419df26347fcae0888d6835a77bc68783b15db81c7c25e2fdb7';
-  // final String _testIdToken =
-  //     'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA4YmY1YzM3NzJkZDRlN2E3MjdhMTAxYmY1MjBmNjU3NWNhYzMyNmYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI5MTQ2ODIzMTMzMjUtOWZ0NW5sNmxrMDJ2Y2JpM2R0bjQyamN2cTd0ZGJ0NjUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5MTQ2ODIzMTMzMjUtYzlrcWNwbWgwdmZsa3FmbHNnaDZjcDM1YjRpZmU5NXEuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDE3NjkzNjc0MTI1MTI5NjM0OTEiLCJlbWFpbCI6InRlc2l1OTcxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiVGVzIEl1IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0tMa1dqcTVlS2tPckw5WkJocHJUYkJ2Y0p1UU1IV3pYOTZUOWVPS3NPTT1zOTYtYyIsImdpdmVuX25hbWUiOiJUZXMiLCJmYW1pbHlfbmFtZSI6Ikl1IiwibG9jYWxlIjoiZW4iLCJpYXQiOjE3MTAxNjAzMjgsImV4cCI6MTcxMDE2MzkyOH0.Gi9W7f2iDBhm7t90PsOMlAAqya-c3331XDp5U07dxJRM_pJUEtBzI26MFZyZR_-7EJZPel-mPmDlGIhS7jzxDHHjvIokGPk5G66UPBU1Yn8Vf1p0uhOxFKCqchnN-p_gSLmfcEl43NS4dxaH_uQlfqPK0TfYpMLHVI7c7u1MbFD0aM79yv2itcOlh7kjs81trV3Gp3ilLwjqg5bUXWe0AMg1HiizTd9ivphy2zXEPueckXspHzEB-zA2mtgStuSqWWfNFARTpARlSgBFAn5hB-T_gACnkJSLy5LSBAEckmYFs1AcLnZXqLMiafi0ar-mS9WZZ4MsW01pmBewmhiT3A';
-
   @override
   void initState() {
     if (kDebugMode) {
