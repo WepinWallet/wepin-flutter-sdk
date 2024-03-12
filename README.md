@@ -64,10 +64,9 @@ Add the URL scheme as below:
    - Idenetifier: bundle id of your project
    - URL Schems: 'wepin.' + Your App ID
      
-  ![스크린샷 2024-01-16 오후 6 27 08](https://github.com/WepinWallet/wepin-flutter-sdk/assets/43332708/8bf25d18-5aef-4767-88e3-f61d10272c64)
+  ![스크린샷 2024-03-12 오후 5 11 41](https://github.com/WepinWallet/wepin-flutter-sdk/assets/43332708/bcb967f9-b9c3-4c53-b89c-b7bee7b64fe3)
+
    
-
-
 ## ⏩ Import SDK 
 ```dart
 import 'package:wepin_flutter/wepin.dart';
