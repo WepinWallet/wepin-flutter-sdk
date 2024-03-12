@@ -65,8 +65,9 @@ class Wepin {
           WepinManagerModel().setWepinStatus('initialized');
           return;
         }
+      } else {
+        throw Exception(reponse.body);
       }
-      WepinManagerModel().setWepinStatus('not_initialized');
     } catch (e) {
       WepinManagerModel().setWepinStatus('not_initialized');
       if (kDebugMode) {

@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:get/get_connect.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wepin_flutter/model/constants.dart';
 import '../wepin_outputs.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
 
 class WepinManagerModel {
   List<Account>? _accountList;
