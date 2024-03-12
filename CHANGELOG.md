@@ -9,3 +9,7 @@
 ## 0.0.3
 
 * Apply InAppBrowser
+
+## 0.0.4
+
+* Support login with external token
