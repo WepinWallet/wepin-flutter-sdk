@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:wepin_flutter/model/wepin_manager_model.dart';
 
 import 'package:wepin_flutter/wepin.dart';
 import 'package:wepin_flutter/wepin_inputs.dart';
