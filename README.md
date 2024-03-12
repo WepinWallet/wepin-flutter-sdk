@@ -346,7 +346,7 @@ Future<WepinUser> loginWithExternalToken(String idToken, String sign)
 
 ### logout (Support from version 0.0.4-alpha)
 
-performs logout for wepin
+This method logs out from the Wepin
 
 ```dart
 Future<void> logout()
