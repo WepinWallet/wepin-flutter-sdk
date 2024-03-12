@@ -43,9 +43,9 @@ Add the below line in your app's `AndroidMainfest.xml` file
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <!--For Deep Link => Urlscheme Format : packageName + .wepin-->
+        <!--For Deep Link => Urlscheme Format : wepin.appID-->
         <data
-            android:scheme="com.sample.app.wepin"
+            android:scheme="wepin.88889999000000000000000000000000"
             />
     </intent-filter>
 </activity>
@@ -71,7 +71,6 @@ Add the URL scheme as below:
 ## ⏩ Import SDK 
 ```dart
 import 'package:wepin_flutter/wepin.dart';
-import 'package:wepin_flutter/wepin_delegate.dart';
 import 'package:wepin_flutter/wepin_inputs.dart';
 import 'package:wepin_flutter/wepin_outputs.dart';
 ```
@@ -130,50 +129,6 @@ class _SampleApp extends State<SampleApp> {
     }
   }
 ```
-
-- Add Event Listener
-
-In order to implement a listener for handling events that occur when an error occurs in the Wepin widget or when an account is created after a successful login, 
-you can inherit the WepinDelegate as follows.
-
-```dart
-class SampleApp extends StatefulWidget with WepinDelegate {
-  SampleApp({super.key});
-
-  @override
-  _SampleApp createState() => _SampleApp();
-
-  @override
-  void onWepinError(String errMsg) {
-    // TODO: implement onWepinError
-    if (kDebugMode) {
-      print('onWepinError : $errMsg');
-    }
-  }
-
-  @override
-  void onAccountSet() {
-    // TODO: implement onAccountSet
-    if (kDebugMode) {
-      print('onAccountSet');
-    }
-    List<Account>? accounts = _wepin.getAccounts();
-    if (accounts == null) {
-      if (kDebugMode) {
-        print('accounts is null');
-      }
-      return;
-    }
-    for (var account in accounts!) {
-      if (kDebugMode) {
-        print('netwrok : ${account.network}');
-        print('address : ${account.address}');
-      }
-    }
-  }
-}
-```
-
 
 ## ⏩ Methods
 

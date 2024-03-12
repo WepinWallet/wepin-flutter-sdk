@@ -14,9 +14,15 @@ dependencies:
   webview_flutter: ^4.0.7     # 4.0.7 <= webview_flutter < 5.0.0
   url_launcher: ^6.1.10
   flutter_inappwebview: ^6.0.0
+  flutter_secure_storage: ^5.0.2
+  secp256k1: ^0.3.0
+  crypto: ^3.0.1
+  hex: ^0.2.0
 
   get: ^4.6.5
-  package_info_plus: ^5.0.1
+  package_info_plus: ^5.0.1  
+  convert: ^3.1.1
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

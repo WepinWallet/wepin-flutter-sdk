@@ -4,6 +4,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
+        android:largeHeap="true"
         >
         <activity
             android:name=".MainActivity"
@@ -29,7 +30,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="com.sample.wepin.flutter.dev.wepin" />
+                <data android:scheme="wepin.88889999000000000000000000000000" />
 
             </intent-filter>
         </activity>
