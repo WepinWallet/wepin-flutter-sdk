@@ -13,3 +13,7 @@
 ## 0.0.4
 
 * Support login with external token
+
+## 0.0.5
+
+* Update README
