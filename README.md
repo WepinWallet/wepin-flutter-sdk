@@ -314,6 +314,8 @@ String getSignForLogin(String privKey, String idToken)
 - signned token <String>
   -You can log in with the loginWithExternalToken function using this.
 
+## Please inquire about the issuance of a private key by contacting wepin.contact@iotrust.kr
+
 ### loginWithExternalToken (Support from version 0.0.4-alpha)
 
 This method logs in to the Wepin with external token(e.g., idToken). 
