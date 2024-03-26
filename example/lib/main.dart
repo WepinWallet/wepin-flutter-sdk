@@ -33,7 +33,7 @@ class _SampleApp extends State<SampleApp> {
   final String _testPrivKey = 'PrivateKey for signnig idToken';
   final String _testIdToken = 'idToken for loginWithExternalToken';
   String _testSignedIdToken = '';
-  String _wepinResult = 'false';
+  String _wepinResult = '';
 
   @override
   void initState() {

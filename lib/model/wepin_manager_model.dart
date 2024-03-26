@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:get/get_connect.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wepin_flutter/model/constants.dart';
 import '../wepin_outputs.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class WepinManagerModel {
   List<Account>? _accountList;
@@ -157,7 +160,7 @@ class WepinManagerModel {
 
   String getWepinStatus() {
     if (kDebugMode) {
-      print('getWepinStatus');
+      print('getWepinStatus : $_wepinLifeCycle');
     }
     return _wepinLifeCycle;
   }
@@ -198,11 +201,16 @@ class WepinManagerModel {
     if (kDebugMode) {
       print('createEventListener');
     }
-
-    if (!_controller.isClosed) {
-      _controller.close();
+    try {
+      if (!_controller.isClosed) {
+        _controller.close();
+      }
+      _controller = StreamController<String>();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Exception : $e');
+      }
     }
-    _controller = StreamController<String>();
   }
 
   Future<EventResult> listenResultEvent() async {

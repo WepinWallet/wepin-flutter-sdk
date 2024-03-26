@@ -90,7 +90,7 @@ class _WepinFlutter extends State<WepinFlutter> {
   @override
   void initState() {
     if (kDebugMode) {
-      print('initState');
+      print('wepin_flutter_initState');
     } // Noti : call 되면 최초 한번만 실행됨
     super.initState();
     if (Platform.isAndroid) {
@@ -159,7 +159,7 @@ class _WepinFlutter extends State<WepinFlutter> {
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
-      print('build');
+      print('wepin_flutter_build');
     }
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -262,14 +262,14 @@ class _WepinFlutter extends State<WepinFlutter> {
   void deactivate() {
     super.deactivate();
     if (kDebugMode) {
-      print('deactivate');
+      print('wepin_flutter_deactivate');
     }
   }
 
   @override
   void dispose() {
     if (kDebugMode) {
-      print('dispose');
+      print('wepin_flutter_dispose');
     }
     super.dispose();
   }
@@ -406,6 +406,12 @@ class _WepinFlutter extends State<WepinFlutter> {
           }
         }
         WepinManagerModel().setAccounts(accounts);
+        if (accounts.isEmpty) {
+          if (WepinManagerModel().getWepinStatus() == 'login') {
+            // 위젯 웹뷰에서 로그아웃 눌렸을때 처리
+            WepinManagerModel().setWepinStatus('initialized');
+          }
+        }
         response = jsonEncode(
             JSResponse(header: responseHeader!, body: responseBody!).toJson());
         break;
@@ -413,22 +419,27 @@ class _WepinFlutter extends State<WepinFlutter> {
         if (kDebugMode) {
           print('close_wepin_widget');
         }
+        if (Platform.isAndroid) {
+          if (WepinManagerModel().getWepinStatus() == 'login_before_register') {
+            response = jsonEncode(
+                JSResponse(header: responseHeader!, body: responseBody!)
+                    .toJson());
+            break;
+          }
+        }
         response = jsonEncode(
             JSResponse(header: responseHeader!, body: responseBody!).toJson());
-        if (mounted) {
-          if (Navigator.canPop(context)) {
-            if (kDebugMode) {
-              //print('return_to_app');
+        WepinManagerModel().closeEventListener();
+        Future.delayed(Duration(microseconds: 500), () {
+          if (mounted) {
+            if (Navigator.canPop(context)) {
+              if (kDebugMode) {
+                //print('return_to_app');
+              }
+              Navigator.pop(context);
             }
-            Navigator.pop(context);
           }
-        } else {
-          if (kDebugMode) {
-            print('wepin flutter is not mounted');
-          }
-          //widget._appWidget.onWepinError('wepin flutter is not mounted');
-          throw Exception('wepin flutter is not mounted');
-        }
+        });
         break;
       case 'login_with_external_token':
         // external idToken Login에 대한 웹뷰 응답처리
@@ -438,8 +449,6 @@ class _WepinFlutter extends State<WepinFlutter> {
         if (jsResponse!.body.state == 'SUCCESS') {
           //String loginStatus = jsResponse.body.data['loginStatus'].toString();
           String loginStatus = jsResponse.body.data['loginStatus'];
-          String loginToken = jsResponse.body.data['token']
-              ['idToken']; // wepin login 후 받은 firebase idToken
           if (kDebugMode) {
             print('wepinLoginStatus : $loginStatus');
             //print('wepinLoginToken : $loginToken');
@@ -455,57 +464,65 @@ class _WepinFlutter extends State<WepinFlutter> {
             WepinManagerModel().setWepinUserInfo(wepinUser);
             WepinManagerModel()
                 .sendResultEvent(true, wepinUser.toJson().toString());
-          } else if (loginStatus == 'pinRequired') {
+          } else {
             //WepinManagerModel().sendResultEvent(false, 'doRegister');
+            WepinManagerModel().setWepinStatus('login_before_register');
             String signedToken = WepinManagerModel().getSignedToken();
             String externalIdToken = WepinManagerModel().getExternalIdToken();
-            regiterWithWidget(
+            _regiterWithWidget(
                 loginStatus,
                 (jsResponse.body.data['pinRequired'] != null).toString(),
                 externalIdToken,
                 signedToken);
           }
         }
+
+        response = jsonEncode(
+            JSResponse(header: responseHeader!, body: responseBody!).toJson());
         break;
       case 'set_local_storage':
         if (kDebugMode) {
           print('set_local_storage');
         }
-
-        if (request!.body.parameter['data']['user_login_info']['status'] ==
-            'success') {
-          // save wepin refresh & access token
-          String jsonStr =
-              jsonEncode(request.body.parameter['data']['wepin:connectUser']);
-          // WepinManagerModel().setSecureStorageData(Constants.wepinTokenKeyName,
-          //     request.body.parameter['data']['wepin:connectUser']);
-          WepinManagerModel()
-              .setSecureStorageData(Constants.wepinTokenKeyName, jsonStr);
-          WepinManagerModel().setWepinStatus('login');
-
+        if (WepinManagerModel().getWepinStatus() == 'before_login' ||
+            WepinManagerModel().getWepinStatus() == 'login_before_register') {
           WepinUser wepinUser = WepinUser.fromJson(
-              request.body.parameter['data']['user_login_info']);
+              request!.body.parameter['data']['user_login_info']);
           WepinManagerModel().setWepinUserInfo(wepinUser);
-          WepinManagerModel()
-              .sendResultEvent(true, wepinUser.toJson().toString());
-        } else {
-          WepinUser wepinUser = WepinUser.fromJson(
-              request.body.parameter['data']['user_login_info']);
-          WepinManagerModel().setWepinUserInfo(wepinUser);
-          WepinManagerModel().setWepinStatus('initialized');
+          if (request.body.parameter['data']['user_login_info']['status'] ==
+              'success') {
+            // save wepin refresh & access token
+            String jsonStr =
+                jsonEncode(request.body.parameter['data']['wepin:connectUser']);
+            WepinManagerModel()
+                .setSecureStorageData(Constants.wepinTokenKeyName, jsonStr);
+            WepinManagerModel().setWepinStatus('login');
+            WepinManagerModel()
+                .sendResultEvent(true, wepinUser.toJson().toString());
+          }
         }
 
         // 결과 출력
         response = jsonEncode(
             JSResponse(header: responseHeader!, body: responseBody!).toJson());
         break;
-      case 'set_user_info': // 하위 버전의 sdk 를 위해서 존재 이후버전은 set_local_storage 로만 처리해도됨
-        // user info 값은 이 요청은 무시하고 set_local_storage의 데이터에 있는 user_login_info 값으로 상태 관리할것
-        // 둘이 같은 기능을 하므로..
+      case 'set_user_info':
         if (kDebugMode) {
           print('set_user_info');
         }
-        // Do Nothing
+        // if (WepinManagerModel().getWepinStatus() == 'before_login' ||
+        //     WepinManagerModel().getWepinStatus() == 'login_before_register') {
+        //   if (request!.body.parameter['status'] == 'success') {
+        //     WepinManagerModel().setWepinStatus('login');
+        //   } else {
+        //     WepinManagerModel().setWepinStatus('initialized');
+        //   }
+        //   WepinUser wepinUser = WepinUser.fromJson(request.body.parameter);
+        //   WepinManagerModel().setWepinUserInfo(wepinUser);
+        //   WepinManagerModel()
+        //       .sendResultEvent(true, wepinUser.toJson().toString());
+        // }
+
         response = jsonEncode(
             JSResponse(header: responseHeader!, body: responseBody!).toJson());
         break;
@@ -524,10 +541,10 @@ class _WepinFlutter extends State<WepinFlutter> {
     _webViewController.reload();
   }
 
-  regiterWithWidget(String loginStatus, String pinRequired, String token,
+  _regiterWithWidget(String loginStatus, String pinRequired, String token,
       String singedToken) {
     if (kDebugMode) {
-      print('regiterWithWidget');
+      print('_regiterWithWidget');
     }
     int id = WepinUtils().getTimeNowToInt();
     String url =

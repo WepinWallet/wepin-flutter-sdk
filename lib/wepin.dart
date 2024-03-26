@@ -356,6 +356,7 @@ class Wepin {
     WepinManagerModel().setWepinStatus('not_initialized');
     WepinManagerModel().setAccounts(null);
     WepinManagerModel().setExternalIdToken('');
+    WepinManagerModel().closeEventListener();
     if (_wepinFlutter != null) {
       _wepinFlutter!.finalize();
       _wepinFlutter = null;
