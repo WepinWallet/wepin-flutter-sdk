@@ -312,10 +312,6 @@ class _WepinFlutter extends State<WepinFlutter> {
       if (kDebugMode) {
         //print('command : $command');
       }
-      String parameter = request.body.parameter.toString();
-      if (kDebugMode) {
-        //print('parameter : $parameter');
-      }
 
       responseHeader = ResponseHeader(
           id: request.header.id,
@@ -361,7 +357,7 @@ class _WepinFlutter extends State<WepinFlutter> {
             widget._wepinOptions.appId);
         responseBody!.data = readyToWidgetData.toJson();
         response = jsonEncode(
-            JSResponse(header: responseHeader!, body: responseBody!).toJson());
+            JSResponse(header: responseHeader!, body: responseBody).toJson());
         //sendFinishEvent('testevent');
         //WepinManagerModel().sendResultEvent('testevent');
         //WepinManagerModel().sendResultEvent(false, 'testeventMessage');
@@ -471,7 +467,7 @@ class _WepinFlutter extends State<WepinFlutter> {
             String externalIdToken = WepinManagerModel().getExternalIdToken();
             _regiterWithWidget(
                 loginStatus,
-                (jsResponse.body.data['pinRequired'] != null).toString(),
+                (jsResponse.body.data['pinRequired']).toString(),
                 externalIdToken,
                 signedToken);
           }
