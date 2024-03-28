@@ -21,3 +21,7 @@
 ## 0.0.6
 
 * Stabilization
+
+## 0.0.7
+
+* Stabilization

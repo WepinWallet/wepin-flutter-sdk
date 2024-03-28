@@ -12,7 +12,7 @@ class Constants {
   static const String prodSdkFacadeUrl = "https://sdk.wepin.io"; // prod
 
   //static const String widgetInterfaceVersion = '1';
-  static const String sdkVersion = '0.0.6';
+  static const String sdkVersion = '0.0.7';
   static const int androidPlatformNum = 2;
   static const int iosPlatformNum = 3;
 

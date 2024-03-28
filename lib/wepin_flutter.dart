@@ -443,7 +443,6 @@ class _WepinFlutter extends State<WepinFlutter> {
           print('login_with_external_token');
         }
         if (jsResponse!.body.state == 'SUCCESS') {
-          //String loginStatus = jsResponse.body.data['loginStatus'].toString();
           String loginStatus = jsResponse.body.data['loginStatus'];
           if (kDebugMode) {
             print('wepinLoginStatus : $loginStatus');
@@ -461,7 +460,6 @@ class _WepinFlutter extends State<WepinFlutter> {
             WepinManagerModel()
                 .sendResultEvent(true, wepinUser.toJson().toString());
           } else {
-            //WepinManagerModel().sendResultEvent(false, 'doRegister');
             WepinManagerModel().setWepinStatus('login_before_register');
             String signedToken = WepinManagerModel().getSignedToken();
             String externalIdToken = WepinManagerModel().getExternalIdToken();
@@ -472,9 +470,6 @@ class _WepinFlutter extends State<WepinFlutter> {
                 signedToken);
           }
         }
-
-        response = jsonEncode(
-            JSResponse(header: responseHeader!, body: responseBody!).toJson());
         break;
       case 'set_local_storage':
         if (kDebugMode) {

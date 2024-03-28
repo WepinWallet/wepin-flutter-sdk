@@ -103,7 +103,6 @@ class Wepin {
       if (kDebugMode) {
         print('eventResult message : ${eventResult.message}');
       }
-
       WepinManagerModel().closeEventListener();
     }
 
